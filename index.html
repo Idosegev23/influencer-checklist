@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>צ'קליסט קליטת משפיען</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+    background: #f0f2f5;
+    color: #1a1a2e;
+    padding: 30px 20px;
+    direction: rtl;
+    min-height: 100vh;
+  }
+  .container { max-width: 680px; margin: 0 auto; }
+  h1 { font-size: 24px; font-weight: 700; margin-bottom: 6px; }
+  .subtitle { font-size: 13px; color: #6b7280; margin-bottom: 24px; }
+  .progress-text { font-size: 13px; color: #6b7280; margin-bottom: 8px; font-weight: 500; }
+  .progress-bar-wrapper {
+    background: #e5e7eb; border-radius: 10px; height: 8px;
+    margin-bottom: 28px; overflow: hidden;
+  }
+  .progress-bar {
+    height: 100%; background: linear-gradient(90deg, #6366f1, #818cf8);
+    border-radius: 10px; transition: width 0.4s ease; width: 0%;
+  }
+  .task {
+    background: #fff; border-radius: 10px; padding: 14px 18px;
+    margin-bottom: 8px; display: flex; align-items: center; gap: 14px;
+    border: 1px solid #e5e7eb; transition: all 0.2s; cursor: pointer;
+  }
+  .task:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+  .task.checked { opacity: 0.45; }
+  .task.checked .title { text-decoration: line-through; color: #9ca3af; }
+  .cb {
+    width: 20px; height: 20px; border-radius: 5px; border: 2px solid #d1d5db;
+    cursor: pointer; appearance: none; -webkit-appearance: none;
+    flex-shrink: 0; position: relative; transition: all 0.15s;
+  }
+  .cb:checked { background: #6366f1; border-color: #6366f1; }
+  .cb:checked::after {
+    content: '✓'; position: absolute; color: #fff; font-size: 13px;
+    font-weight: 700; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  }
+  .info { flex: 1; }
+  .title { font-size: 14px; font-weight: 600; color: #1f2937; line-height: 1.4; }
+  .badge {
+    font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 12px;
+    display: inline-block; margin-top: 4px; white-space: nowrap;
+  }
+  .b1 { background: #dbeafe; color: #1d4ed8; }
+  .b2 { background: #fef3c7; color: #92400e; }
+  .b3 { background: #d1fae5; color: #065f46; }
+  .b4 { background: #ede9fe; color: #5b21b6; }
+  .b5 { background: #fce7f3; color: #9d174d; }
+  .b6 { background: #ffedd5; color: #9a3412; }
+  .b7 { background: #fee2e2; color: #991b1b; }
+  .note { font-size: 11px; color: #aaa; margin-top: 3px; }
+  .num { font-size: 12px; font-weight: 700; color: #d1d5db; min-width: 18px; text-align: center; flex-shrink: 0; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>צ'קליסט קליטת משפיען</h1>
+  <p class="subtitle">תהליך סריקה, אימות והכנסה למערכת</p>
+  <p class="progress-text" id="pt">0 / 8</p>
+  <div class="progress-bar-wrapper"><div class="progress-bar" id="pb"></div></div>
+
+  <div class="task" onclick="toggle(this)">
+    <span class="num">1</span>
+    <input type="checkbox" class="cb">
+    <div class="info">
+      <div class="title">סריקת חשבון אינסטגרם של המשפיען</div>
+      <span class="badge b1">שילוב נתונים</span>
+    </div>
+  </div>
+
+  <div class="task" onclick="toggle(this)">
+    <span class="num">2</span>
+    <input type="checkbox" class="cb">
+    <div class="info">
+      <div class="title">גילוי נוכחות דיגיטלית מלאה (אתר, טיקטוק, פייסבוק, יוטיוב)</div>
+      <span class="badge b2">מחקר</span>
+    </div>
+  </div>
+
+  <div class="task" onclick="toggle(this)">
+    <span class="num">3</span>
+    <input type="checkbox" class="cb">
+    <div class="info">
+      <div class="title">זיהוי טכנולוגיית אתר (וורדפרס, ג'אווה, ריאקט)</div>
+      <span class="badge b3">טכנולוגיה</span>
+      <div class="note">סריקה באמצעות סקריפט מקומי, לא Apify</div>
+    </div>
+  </div>
+
+  <div class="task" onclick="toggle(this)">
+    <span class="num">4</span>
+    <input type="checkbox" class="cb">
+    <div class="info">
+      <div class="title">וידוא כניסת תמלולים ונתונים למאגר</div>
+      <span class="badge b4">דאטה</span>
+    </div>
+  </div>
+
+  <div class="task" onclick="toggle(this)">
+    <span class="num">5</span>
+    <input type="checkbox" class="cb">
+    <div class="info">
+      <div class="title">סריקה ושמירת תמונת פרופיל למסד הנתונים</div>
+      <span class="badge b5">גרפיקה / דאטה</span>
+    </div>
+  </div>
+
+  <div class="task" onclick="toggle(this)">
+    <span class="num">6</span>
+    <input type="checkbox" class="cb">
+    <div class="info">
+      <div class="title">וידוא תקינות קופונים ומותגים משויכים</div>
+      <span class="badge b4">קשרי מותגים</span>
+    </div>
+  </div>
+
+  <div class="task" onclick="toggle(this)">
+    <span class="num">7</span>
+    <input type="checkbox" class="cb">
+    <div class="info">
+      <div class="title">בדיקות תוכן ראשוניות (איכות ורלוונטיות)</div>
+      <span class="badge b6">עורכי תוכן</span>
+    </div>
+  </div>
+
+  <div class="task" onclick="toggle(this)">
+    <span class="num">8</span>
+    <input type="checkbox" class="cb">
+    <div class="info">
+      <div class="title">אישור סופי והעברת החשבון למערכת הפעילה</div>
+      <span class="badge b7">מנהל המערכת</span>
+    </div>
+  </div>
+</div>
+
+<script>
+function toggle(el){
+  const cb = el.querySelector('.cb');
+  cb.checked = !cb.checked;
+  el.classList.toggle('checked', cb.checked);
+  update();
+}
+function update(){
+  const t = document.querySelectorAll('.cb').length;
+  const d = document.querySelectorAll('.cb:checked').length;
+  document.getElementById('pb').style.width = Math.round((d/t)*100)+'%';
+  document.getElementById('pt').textContent = d+' / '+t;
+}
+</script>
+</body>
+</html>
