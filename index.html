@@ -16,7 +16,34 @@
   }
   .container { max-width: 680px; margin: 0 auto; }
   h1 { font-size: 24px; font-weight: 700; margin-bottom: 6px; }
-  .subtitle { font-size: 13px; color: #6b7280; margin-bottom: 24px; }
+  .subtitle { font-size: 13px; color: #6b7280; margin-bottom: 20px; }
+
+  /* Influencer name header */
+  .name-section {
+    background: linear-gradient(135deg, #6366f1, #818cf8);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 24px;
+    color: #fff;
+  }
+  .name-label { font-size: 12px; font-weight: 500; opacity: 0.8; margin-bottom: 6px; }
+  .name-input {
+    width: 100%;
+    background: rgba(255,255,255,0.15);
+    border: 2px solid rgba(255,255,255,0.3);
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 20px;
+    font-weight: 700;
+    color: #fff;
+    outline: none;
+    direction: rtl;
+    font-family: inherit;
+    transition: border-color 0.2s;
+  }
+  .name-input::placeholder { color: rgba(255,255,255,0.5); }
+  .name-input:focus { border-color: rgba(255,255,255,0.7); }
+
   .progress-text { font-size: 13px; color: #6b7280; margin-bottom: 8px; font-weight: 500; }
   .progress-bar-wrapper {
     background: #e5e7eb; border-radius: 10px; height: 8px;
@@ -59,12 +86,59 @@
   .b7 { background: #fee2e2; color: #991b1b; }
   .note { font-size: 11px; color: #aaa; margin-top: 3px; }
   .num { font-size: 12px; font-weight: 700; color: #d1d5db; min-width: 18px; text-align: center; flex-shrink: 0; }
+
+  /* Send section */
+  .send-section {
+    margin-top: 32px;
+    background: #fff;
+    border-radius: 12px;
+    padding: 20px;
+    border: 1px solid #e5e7eb;
+  }
+  .send-title { font-size: 15px; font-weight: 700; margin-bottom: 14px; color: #1f2937; }
+  .send-buttons { display: flex; gap: 10px; flex-wrap: wrap; }
+  .send-btn {
+    flex: 1;
+    min-width: 140px;
+    padding: 12px 16px;
+    border-radius: 10px;
+    border: none;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: transform 0.15s, box-shadow 0.15s;
+    font-family: inherit;
+    color: #fff;
+  }
+  .send-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+  .send-btn:active { transform: translateY(0); }
+  .btn-email { background: linear-gradient(135deg, #6366f1, #4f46e5); }
+  .btn-whatsapp { background: linear-gradient(135deg, #25d366, #128c7e); }
+  .btn-icon { font-size: 18px; }
+
+  .toast {
+    position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(80px);
+    background: #1f2937; color: #fff; padding: 12px 24px; border-radius: 10px;
+    font-size: 14px; font-weight: 500; opacity: 0; transition: all 0.3s ease;
+    z-index: 100; white-space: nowrap;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 </style>
 </head>
 <body>
 <div class="container">
   <h1>צ'קליסט קליטת משפיען</h1>
   <p class="subtitle">תהליך סריקה, אימות והכנסה למערכת</p>
+
+  <div class="name-section">
+    <div class="name-label">שם המשפיען / המותג</div>
+    <input type="text" class="name-input" id="influencerName" placeholder="הקלד שם כאן...">
+  </div>
+
   <p class="progress-text" id="pt">0 / 8</p>
   <div class="progress-bar-wrapper"><div class="progress-bar" id="pb"></div></div>
 
@@ -140,7 +214,22 @@
       <span class="badge b7">מנהל המערכת</span>
     </div>
   </div>
+
+  <!-- Send section -->
+  <div class="send-section">
+    <div class="send-title">שליחת סטטוס הצ'קליסט</div>
+    <div class="send-buttons">
+      <button class="send-btn btn-email" onclick="sendEmail()">
+        <span class="btn-icon">&#9993;</span> שלח במייל
+      </button>
+      <button class="send-btn btn-whatsapp" onclick="sendWhatsApp()">
+        <span class="btn-icon">&#9742;</span> שלח בוואטסאפ
+      </button>
+    </div>
+  </div>
 </div>
+
+<div class="toast" id="toast"></div>
 
 <script>
 function toggle(el){
@@ -154,6 +243,46 @@ function update(){
   const d = document.querySelectorAll('.cb:checked').length;
   document.getElementById('pb').style.width = Math.round((d/t)*100)+'%';
   document.getElementById('pt').textContent = d+' / '+t;
+}
+
+function buildSummary(){
+  const name = document.getElementById('influencerName').value.trim() || 'לא צוין';
+  const tasks = document.querySelectorAll('.task');
+  let lines = [];
+  lines.push('צ׳קליסט קליטת משפיען: ' + name);
+  lines.push('─'.repeat(30));
+  tasks.forEach((t,i) => {
+    const done = t.querySelector('.cb').checked;
+    const title = t.querySelector('.title').textContent;
+    lines.push((done ? '✅' : '⬜') + ' ' + (i+1) + '. ' + title);
+  });
+  const total = tasks.length;
+  const completed = document.querySelectorAll('.cb:checked').length;
+  lines.push('─'.repeat(30));
+  lines.push('סה״כ: ' + completed + ' / ' + total + ' הושלמו');
+  return lines.join('\n');
+}
+
+function sendEmail(){
+  const name = document.getElementById('influencerName').value.trim() || 'משפיען';
+  const subject = encodeURIComponent('סטטוס צ׳קליסט קליטה - ' + name);
+  const body = encodeURIComponent(buildSummary());
+  const to = 'cto@ldrsgroup.com,yoav@ldrsgroup.com';
+  window.open('mailto:' + to + '?subject=' + subject + '&body=' + body, '_blank');
+  showToast('נפתח חלון מייל...');
+}
+
+function sendWhatsApp(){
+  const text = encodeURIComponent(buildSummary());
+  window.open('https://wa.me/?text=' + text, '_blank');
+  showToast('נפתח וואטסאפ...');
+}
+
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
 }
 </script>
 </body>
